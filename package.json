@@ -50,7 +50,7 @@
     "vue-loader": "^15.9.8",
     "webpack": "^5.104.1",
     "webpack-cli": "^6.0.1",
-    "webpack-favicons": "^1.5.43"
+    "webpack-favicons": "file:vendor/webpack-favicons-1.5.43.tgz"
   },
   "scripts": {
     "dev": "CGO_ENABLED=0 NODE_ENV=development webpack --mode=development --config=webpack.config.js --watch",
