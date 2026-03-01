@@ -6,17 +6,22 @@ RUN set -ex && \
     echo '#!/bin/sh' > /child.sh && echo 'cpid=""; ret=0; i=0; for c in "$@"; do ( (((((eval "$c"; echo $? >&3) | sed "s/^/|-($i) /" >&4) 2>&1 | sed "s/^/|-($i)!/" >&2) 3>&1) | (read xs; exit $xs)) 4>&1) & ppid=$!; cpid="$cpid $ppid"; echo "+ Child $i (PID $ppid): $c ..."; i=$((i+1)); done; for c in $cpid; do wait $c; cret=$?; [ $cret -eq 0 ] && continue; echo "* Child PID $c has failed." >&2; ret=$cret; done; exit $ret' >> /child.sh && chmod +x /child.sh && \
     export PATH=$PATH:/ && \
     export DEBIAN_FRONTEND=noninteractive && \
+    sed -i 's|http://archive.ubuntu.com|https://mirrors.aliyun.com|g; s|http://security.ubuntu.com|https://mirrors.aliyun.com|g' /etc/apt/sources.list 2>/dev/null; \
+    ([ -f /etc/apt/sources.list.d/ubuntu.sources ] && sed -i 's|http://archive.ubuntu.com|https://mirrors.aliyun.com|g; s|http://security.ubuntu.com|https://mirrors.aliyun.com|g; s|URIs: .*|URIs: https://mirrors.aliyun.com/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources) || true && \
     ([ -z "$HTTP_PROXY" ] || (echo "Acquire::http::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf)) && \
     ([ -z "$HTTPS_PROXY" ] || (echo "Acquire::https::Proxy \"$HTTPS_PROXY\";" >> /etc/apt/apt.conf)) && \
     (echo "Acquire::Retries \"8\";" >> /etc/apt/apt.conf) && \
     echo '#!/bin/sh' > /install.sh && echo 'apt-get -y update && apt-get -y --fix-broken install autoconf automake libtool build-essential ca-certificates curl git nodejs npm golang-go libvips libvips-dev' >> /install.sh && chmod +x /install.sh && \
     /try.sh /install.sh && rm /install.sh && \
     /try.sh update-ca-certificates -f && c_rehash && \
+    npm config set registry https://registry.npmmirror.com && \
     ([ -z "$HTTP_PROXY" ] || (git config --global http.proxy "$HTTP_PROXY" && npm config set proxy "$HTTP_PROXY")) && \
     ([ -z "$HTTPS_PROXY" ] || (git config --global https.proxy "$HTTPS_PROXY" && npm config set https-proxy "$HTTPS_PROXY")) && \
+    export GOPROXY=https://goproxy.cn,direct && \
     export PATH=$PATH:"$(go env GOPATH)/bin" && \
     ([ -z "$CUSTOM_COMMAND" ] || (echo "Running custom command: $CUSTOM_COMMAND" && $CUSTOM_COMMAND)) && \
-    echo '#!/bin/sh' > /install.sh && echo "(npm install -g n && n stable) || (npm cache clean -f && false)" >> /install.sh && chmod +x /install.sh && /try.sh /install.sh && rm /install.sh && \
+    export N_NODE_MIRROR=https://npmmirror.com/mirrors/node && \
+    echo '#!/bin/sh' > /install.sh && echo "(N_NODE_MIRROR=https://npmmirror.com/mirrors/node npm install -g n && N_NODE_MIRROR=https://npmmirror.com/mirrors/node n stable) || (npm cache clean -f && false)" >> /install.sh && chmod +x /install.sh && /try.sh /install.sh && rm /install.sh && \
     git version && \
     go version && \
     npm version
@@ -29,11 +34,12 @@ RUN set -ex && \
     export PATH=$PATH:/ && \
     export DEBIAN_FRONTEND=noninteractive && \
     export CPPFLAGS='-DPNG_ARM_NEON_OPT=0' && \
+    export GOPROXY=https://goproxy.cn,direct && \
     /try.sh apt-get install libpng-dev -y && \
     ls -l /tmp/.build/sshwifty && \
     /child.sh \
         "cd /tmp/.build/sshwifty && echo '#!/bin/sh' > /npm_install.sh && echo \"npm install || (npm cache clean -f && rm ~/.npm/_* -rf && false)\" >> /npm_install.sh && chmod +x /npm_install.sh && /try.sh /npm_install.sh && rm /npm_install.sh" \
-        'cd /tmp/.build/sshwifty && /try.sh go mod download'
+        'cd /tmp/.build/sshwifty && export GOPROXY=https://goproxy.cn,direct && /try.sh go mod download'
 
 # Main building environment
 FROM libbase AS builder
@@ -46,6 +52,7 @@ RUN set -ex && \
 
 # Build the final image for running
 FROM alpine:latest
+RUN sed -i 's|dl-cdn.alpinelinux.org|mirrors.aliyun.com|g' /etc/apk/repositories
 ENV SSHWIFTY_HOSTNAME= \
     SSHWIFTY_SHAREDKEY= \
     SSHWIFTY_DIALTIMEOUT=10 \
