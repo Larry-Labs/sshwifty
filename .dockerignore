@@ -10,4 +10,4 @@
 !*.js
 !*.cjs
 !*.mjs
-!vendor/*
+!_packages/*
