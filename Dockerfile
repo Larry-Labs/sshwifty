@@ -6,8 +6,7 @@ RUN set -ex && \
     echo '#!/bin/sh' > /child.sh && echo 'cpid=""; ret=0; i=0; for c in "$@"; do ( (((((eval "$c"; echo $? >&3) | sed "s/^/|-($i) /" >&4) 2>&1 | sed "s/^/|-($i)!/" >&2) 3>&1) | (read xs; exit $xs)) 4>&1) & ppid=$!; cpid="$cpid $ppid"; echo "+ Child $i (PID $ppid): $c ..."; i=$((i+1)); done; for c in $cpid; do wait $c; cret=$?; [ $cret -eq 0 ] && continue; echo "* Child PID $c has failed." >&2; ret=$cret; done; exit $ret' >> /child.sh && chmod +x /child.sh && \
     export PATH=$PATH:/ && \
     export DEBIAN_FRONTEND=noninteractive && \
-    sed -i 's|http://archive.ubuntu.com|https://mirrors.ustc.edu.cn|g; s|http://security.ubuntu.com|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list 2>/dev/null; \
-    ([ -f /etc/apt/sources.list.d/ubuntu.sources ] && sed -i 's|URIs: .*|URIs: https://mirrors.ustc.edu.cn/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources) || true && \
+    (rm -f /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null; echo "deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble main restricted universe multiverse" > /etc/apt/sources.list && echo "deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-updates main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-security main restricted universe multiverse" >> /etc/apt/sources.list) && \
     ([ -z "$HTTP_PROXY" ] || (echo "Acquire::http::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf)) && \
     ([ -z "$HTTPS_PROXY" ] || (echo "Acquire::https::Proxy \"$HTTPS_PROXY\";" >> /etc/apt/apt.conf)) && \
     (echo "Acquire::Retries \"8\";" >> /etc/apt/apt.conf) && \
