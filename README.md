@@ -2,18 +2,24 @@
 
 **Sshwifty is a web-based SSH client with integrated SFTP file management**, allowing you to access SSH terminal and transfer files right from your web browser.
 
+> Fork of [nirui/sshwifty](https://github.com/nirui/sshwifty), enhanced by Larry Gao.
+
 ![Screenshot](Screenshot.png)
 
 ## Features
 
-- **SSH Terminal**: Full-featured SSH terminal emulator powered by xterm.js with WebGL rendering support
+- **SSH Terminal**: Full-featured SSH terminal emulator powered by xterm.js with WebGL rendering, unlimited scrollback buffer
 - **SFTP File Manager**: Built-in file browser with drag-and-drop upload, download, directory creation, and file/folder deletion
 - **Adaptive Rate Limiting**: Dynamic SFTP upload speed adjustment based on network latency (AIMD algorithm), ensuring terminal responsiveness during file transfers
 - **Web Worker Architecture**: SFTP operations run in a dedicated Web Worker thread, preventing UI freezes during large file transfers
-- **Auto Reconnect**: Server-side token-based SSH session reconnection after page refresh (within configurable timeout)
+- **Persistent SSH Sessions**: SSH sessions survive browser refresh — terminal output is preserved via server-side ring buffer and automatically reattached (12-hour TTL)
+- **Password Saving**: Save SSH passwords in browser localStorage (XOR obfuscated) for auto-login on reconnection — no password prompt needed
+- **Seamless Refresh**: Browser refresh restores all SSH tabs instantly with full terminal history, no visible loading flicker
+- **SharedKey Persistence**: Web authentication passphrase is remembered for 12 hours, surviving page refreshes
 - **Font Size Control**: Adjustable terminal font size with persistent settings
 - **Preset Connections**: Pre-configure SSH connections for quick access
-- **Secure**: SharedKey authentication for web interface access, WebSocket origin validation
+- **Mobile Responsive**: Optimized layout for phone and tablet screens with touch-friendly controls
+- **Secure**: SharedKey authentication for web interface access, strict WebSocket origin validation
 
 ## Install
 
@@ -219,11 +225,23 @@ WebCrypt API is required and only available in [Secure Contexts](https://develop
 
 Not officially supported. Sshwifty assets are served under the `/sshwifty` URL prefix, so you could proxy those requests, but this is not recommended.
 
+## Changes from Upstream
+
+This fork adds the following features on top of the original sshwifty:
+
+- Integrated SFTP file manager with drag-and-drop upload and adaptive rate limiting
+- Server-side persistent SSH sessions (survive browser refresh, 12-hour TTL)
+- Multi-tab session recovery with seamless refresh UX
+- SSH password saving and auto-login
+- SharedKey passphrase persistence (12 hours)
+- Unlimited terminal scrollback buffer
+- Mobile responsive layout
+- Removed Telnet support (SSH-only)
+- Custom UI color scheme
+
 ## Credits
 
 Based on the original [Sshwifty](https://github.com/nirui/sshwifty) by [Ni Rui](https://github.com/nirui).
-
-Enhanced with SFTP support, adaptive rate limiting, auto-reconnect, and other improvements.
 
 ## License
 

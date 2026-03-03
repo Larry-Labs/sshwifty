@@ -149,6 +149,9 @@ func (ps *PersistentSession) Close() {
 		}
 		ps.Session.Close()
 		ps.Client.Close()
+
+		GlobalSessions.Unregister(ps.ID)
+		GlobalReconnectTokens.Unregister(ps.Token)
 	})
 }
 

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"strings"
+	"net/url"
 	"sync"
 	"time"
 
@@ -25,14 +25,17 @@ func newSFTPSocketCtl(cfg configuration.Server) sftpSocket {
 	return sftpSocket{
 		upgrader: websocket.Upgrader{
 			HandshakeTimeout: cfg.InitialTimeout,
-			CheckOrigin: func(r *http.Request) bool {
-				origin := r.Header.Get("Origin")
-				if origin == "" {
-					return true
-				}
-				host := r.Host
-				return strings.Contains(origin, host)
-			},
+		CheckOrigin: func(r *http.Request) bool {
+			origin := r.Header.Get("Origin")
+			if origin == "" {
+				return true
+			}
+			u, err := url.Parse(origin)
+			if err != nil {
+				return false
+			}
+			return u.Host == r.Host
+		},
 		},
 	}
 }

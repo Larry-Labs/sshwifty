@@ -626,7 +626,7 @@ export default {
               userData = {
                 host: tabHost,
                 user: tabUser,
-                authentication: "Passphrase",
+                authentication: "Password",
                 charset: "utf-8",
                 fingerprint: "",
                 tabColor: "",
@@ -683,12 +683,14 @@ export default {
           "sshwifty_auto_reconnect_tabs",
         );
         if (rawTabs) {
-          entries = JSON.parse(rawTabs);
+          const parsed = JSON.parse(rawTabs);
+          entries = Array.isArray(parsed) ? parsed : [];
         } else {
           // Fall back to legacy single-tab format
           const raw = sessionStorage.getItem("sshwifty_auto_reconnect");
           if (raw) {
-            entries = [JSON.parse(raw)];
+            const parsed = JSON.parse(raw);
+            entries = parsed && typeof parsed === "object" ? [parsed] : [];
           }
         }
 
