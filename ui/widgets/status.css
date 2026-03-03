@@ -30,6 +30,7 @@
 
 #conn-status .window-frame {
   max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   overflow: auto;
 }
 

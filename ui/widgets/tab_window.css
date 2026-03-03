@@ -30,6 +30,7 @@
 
 #tab-window .window-frame {
   max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   overflow: auto;
 }
 
@@ -40,7 +41,16 @@
 
 @media (max-width: 768px) {
   #tab-window {
-    width: 80%;
+    width: 85%;
+    left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  #tab-window {
+    width: 100%;
+    right: 0;
+    left: 0;
   }
 }
 

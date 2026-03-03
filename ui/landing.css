@@ -42,6 +42,12 @@ body.landing {
   flex: 0 0;
 }
 
+@media (max-width: 480px) {
+  #landing-message {
+    padding: 20px;
+  }
+}
+
 #landing-message a {
   text-decoration: none;
   color: #7df;
@@ -103,6 +109,14 @@ body.landing {
   max-width: 380px;
   margin: 0 auto;
   font-size: 1em;
+}
+
+@media (max-width: 480px) {
+  #auth-content {
+    padding: 20px 15px;
+    max-width: none;
+    margin: 0 10px;
+  }
 }
 
 #auth-content > h1 {

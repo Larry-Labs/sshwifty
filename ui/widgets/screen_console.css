@@ -56,6 +56,17 @@
   z-index: 20;
 }
 
+@media (max-width: 768px) {
+  .console-console-wrapper > .console-toolbar {
+    min-width: 100%;
+    left: 0;
+  }
+
+  .console-toolbar > .console-toolbar-group > .console-toolbar-item {
+    padding: 10px;
+  }
+}
+
 .console-toolbar > .console-toolbar-group.console-toolbar-group-left {
   border-right: 1px solid #0001;
   margin-right: -1px;
@@ -216,6 +227,19 @@
   margin-right: 0;
 }
 
+@media (max-width: 768px) {
+  .file-panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 80%;
+    min-width: 200px;
+    max-width: none;
+    z-index: 10;
+  }
+}
+
 .file-panel-topbar {
   display: flex;
   align-items: center;
@@ -258,8 +282,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
   background: transparent;
   color: #555;
   text-decoration: none;
@@ -353,8 +379,8 @@
   flex-shrink: 0;
   color: #777;
   text-decoration: none;
-  padding: 2px 8px;
-  font-size: 10px;
+  padding: 6px 10px;
+  font-size: 11px;
   border: 1px solid #ffffff12;
   border-radius: 3px;
   margin-left: 2px;

@@ -285,6 +285,13 @@
   align-items: center;
 }
 
+@media (max-width: 768px) {
+  #home-hd-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 #home-hd-tabs-tabs {
   flex: auto;
   overflow: hidden;
@@ -297,6 +304,13 @@
   padding: 0 15px;
   opacity: 0.3;
   color: #999;
+}
+
+@media (max-width: 768px) {
+  #home-hd-tabs-tabs > li {
+    flex: 0 0 120px;
+    padding: 0 8px;
+  }
 }
 
 #home-hd-tabs-tabs > li::after {
@@ -445,9 +459,9 @@
 }
 
 #home-content-connect {
-  padding: 5px;
+  padding: 10px;
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
 }

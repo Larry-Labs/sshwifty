@@ -47,6 +47,7 @@ h6 {
 
 a {
   outline: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -301,10 +302,13 @@ body {
 .icon.icon-keyboardkey1 {
   background: #fff;
   color: #999;
-  padding: 4px 6px;
+  padding: 6px 8px;
   display: inline-block;
   border-radius: 3px;
   box-shadow: 1px 1px 0 2px #0003;
+  min-width: 20px;
+  min-height: 20px;
+  text-align: center;
 }
 
 .icon.icon-iconed-bottom1 {
