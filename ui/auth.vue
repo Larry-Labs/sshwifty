@@ -38,8 +38,8 @@
                 v-focus="true"
                 :disabled="submitting"
                 type="password"
-                autocomplete="off"
-                name="field.field.name"
+                autocomplete="new-password"
+                name="sshwifty-shared-key"
                 placeholder="----------"
                 autofocus="autofocus"
               />

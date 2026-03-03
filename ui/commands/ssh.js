@@ -967,14 +967,14 @@ class Wizard {
       const saved = credentials.get("SSH", userStr, hostStr);
 
       if (saved && saved.password) {
-        for (let i = 0; i < inputFields.length; i++) {
-          if (inputFields[i].name === "Password") {
-            inputFields[i].value = saved.password;
-          }
-          if (inputFields[i].name === "Remember Password") {
-            inputFields[i].value = "on";
-          }
-        }
+        sd.send(
+          CLIENT_CONNECT_RESPOND_CREDENTIAL,
+          new TextEncoder().encode(saved.password),
+        );
+
+        newCredential(saved.password, presetCredentialUsed);
+
+        return self.stepContinueWaitForEstablishWait();
       }
     }
 
@@ -984,7 +984,7 @@ class Wizard {
       "Login",
       (r) => {
         let vv = r[fields[0].name] || r[fields[0].name.toLowerCase()];
-        let rememberPassword = r["Remember Password"];
+        let rememberPassword = r["remember password"];
 
         sd.send(
           CLIENT_CONNECT_RESPOND_CREDENTIAL,
