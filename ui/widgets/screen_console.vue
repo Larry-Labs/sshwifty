@@ -203,7 +203,7 @@
         </div>
 
         <div
-          class="console-console"
+          :class="['console-console', { 'sftp-pill-visible': hasSFTP && !filePanel }]"
           :style="'font-family: ' + typefaces + ', inherit'"
         >
           <h2 style="display: none">Console</h2>
@@ -782,6 +782,9 @@ export default {
       if (this.filePanel && this.files.length === 0) {
         this.refreshFiles();
       }
+      this.$nextTick(() => {
+        this.refit();
+      });
     },
     startResize(e) {
       e.preventDefault();

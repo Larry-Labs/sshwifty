@@ -207,6 +207,11 @@
   margin: 0;
   position: relative;
   z-index: 0;
+  box-sizing: border-box;
+}
+
+#home-content > .screen > .screen-screen > .screen-console > .console-main-area > .console-console-wrapper > .console-console.sftp-pill-visible {
+  padding-bottom: 36px;
 }
 
 /* File panel */
