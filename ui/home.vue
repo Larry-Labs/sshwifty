@@ -714,9 +714,26 @@ export default {
         this.connection.get(this.socket).catch(() => {});
 
         let anySuccess = false;
+        const survivingTokens = [];
         for (let si = 0; si < validEntries.length; si++) {
           const ok = await this.tryReattachOrReconnect(validEntries[si]);
-          if (ok) anySuccess = true;
+          if (ok) {
+            anySuccess = true;
+            survivingTokens.push(validEntries[si]);
+          }
+        }
+
+        // Remove entries whose tokens are no longer valid on the server
+        if (survivingTokens.length < validEntries.length) {
+          if (survivingTokens.length === 0) {
+            sessionStorage.removeItem("sshwifty_auto_reconnect_tabs");
+            sessionStorage.removeItem("sshwifty_auto_reconnect");
+          } else {
+            sessionStorage.setItem(
+              "sshwifty_auto_reconnect_tabs",
+              JSON.stringify(survivingTokens),
+            );
+          }
         }
 
         this.reconnecting = false;
