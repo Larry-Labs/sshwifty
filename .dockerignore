@@ -1,7 +1,8 @@
 **/*
 
-!application/*
-!ui/*
+!application/**
+!ui/**
+!_packages/**
 !*.md
 !*.go
 !*.sum
@@ -10,4 +11,3 @@
 !*.js
 !*.cjs
 !*.mjs
-!_packages/*

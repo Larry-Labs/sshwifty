@@ -29,6 +29,7 @@ RUN set -ex && \
 FROM base AS deps
 RUN mkdir -p /tmp/.build/sshwifty
 COPY package.json package-lock.json /tmp/.build/sshwifty/
+COPY _packages/ /tmp/.build/sshwifty/_packages/
 COPY go.mod go.sum /tmp/.build/sshwifty/
 RUN set -ex && \
     cd / && \
