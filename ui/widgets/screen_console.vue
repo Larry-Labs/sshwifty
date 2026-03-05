@@ -20,13 +20,6 @@
 <template>
   <div class="screen-console">
     <div class="console-main-area">
-      <a
-        v-if="hasSFTP && !filePanel"
-        class="sftp-pill"
-        href="javascript:;"
-        @click="toggleFilePanel"
-      >SFTP</a>
-
       <div v-if="filePanel" class="file-panel" :style="{ width: filePanelWidth + 'px', minWidth: filePanelWidth + 'px', maxWidth: filePanelWidth + 'px' }">
         <div class="file-panel-topbar">
           <div class="file-panel-breadcrumb">
@@ -203,7 +196,7 @@
         </div>
 
         <div
-          :class="['console-console', { 'sftp-pill-visible': hasSFTP && !filePanel }]"
+          class="console-console"
           :style="'font-family: ' + typefaces + ', inherit'"
         >
           <h2 style="display: none">Console</h2>
@@ -215,6 +208,13 @@
             </div>
           </div>
         </div>
+
+        <a
+          v-if="hasSFTP && !filePanel"
+          class="sftp-pill"
+          href="javascript:;"
+          @click="toggleFilePanel"
+        >SFTP</a>
       </div>
     </div>
   </div>
@@ -603,6 +603,12 @@ export default {
     filePanel() {
       const self = this;
       setTimeout(() => { self.fit(); }, 50);
+    },
+    hasSFTP() {
+      const self = this;
+      this.$nextTick(() => {
+        setTimeout(() => { self.fit(); }, 50);
+      });
     },
   },
   async mounted() {
