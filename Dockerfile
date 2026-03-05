@@ -1,5 +1,8 @@
 # Build the build base environment
 FROM ubuntu:24.04 AS base
+ENV PATH="/usr/local/go/bin:/root/go/bin:${PATH}" \
+    GOPATH="/root/go" \
+    GOTOOLCHAIN="local"
 RUN set -ex && \
     cd / && \
     echo '#!/bin/sh' > /try.sh && echo 'res=1; for i in $(seq 0 36); do $@; res=$?; [ $res -eq 0 ] && exit $res || sleep 10; done; exit $res' >> /try.sh && chmod +x /try.sh && \
@@ -10,14 +13,16 @@ RUN set -ex && \
     ([ -z "$HTTP_PROXY" ] || (echo "Acquire::http::Proxy \"$HTTP_PROXY\";" >> /etc/apt/apt.conf)) && \
     ([ -z "$HTTPS_PROXY" ] || (echo "Acquire::https::Proxy \"$HTTPS_PROXY\";" >> /etc/apt/apt.conf)) && \
     (echo "Acquire::Retries \"8\";" >> /etc/apt/apt.conf) && \
-    echo '#!/bin/sh' > /install.sh && echo 'apt-get -y update && apt-get -y --fix-broken install autoconf automake libtool build-essential ca-certificates curl git nodejs npm golang-go libvips libvips-dev' >> /install.sh && chmod +x /install.sh && \
+    echo '#!/bin/sh' > /install.sh && echo 'apt-get -y update && apt-get -y --fix-broken install autoconf automake libtool build-essential ca-certificates curl git nodejs npm libvips libvips-dev' >> /install.sh && chmod +x /install.sh && \
     /try.sh /install.sh && rm /install.sh && \
     /try.sh update-ca-certificates -f && c_rehash && \
+    curl -fsSL https://golang.google.cn/dl/go1.24.3.linux-$(dpkg --print-architecture).tar.gz | tar -C /usr/local -xz && \
+    export PATH=/usr/local/go/bin:$PATH && \
+    export GOPATH=/root/go && \
     npm config set registry https://registry.npmmirror.com && \
     ([ -z "$HTTP_PROXY" ] || (git config --global http.proxy "$HTTP_PROXY" && npm config set proxy "$HTTP_PROXY")) && \
     ([ -z "$HTTPS_PROXY" ] || (git config --global https.proxy "$HTTPS_PROXY" && npm config set https-proxy "$HTTPS_PROXY")) && \
     export GOPROXY=https://goproxy.cn,direct && \
-    export PATH=$PATH:"$(go env GOPATH)/bin" && \
     ([ -z "$CUSTOM_COMMAND" ] || (echo "Running custom command: $CUSTOM_COMMAND" && $CUSTOM_COMMAND)) && \
     export N_NODE_MIRROR=https://npmmirror.com/mirrors/node && \
     echo '#!/bin/sh' > /install.sh && echo "(N_NODE_MIRROR=https://npmmirror.com/mirrors/node npm install -g n && N_NODE_MIRROR=https://npmmirror.com/mirrors/node n stable) || (npm cache clean -f && false)" >> /install.sh && chmod +x /install.sh && /try.sh /install.sh && rm /install.sh && \
