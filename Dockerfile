@@ -54,6 +54,7 @@ FROM deps AS builder
 COPY . /tmp/.build/sshwifty
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/root/.npm \
+    --mount=type=cache,target=/root/go/pkg/mod \
     set -ex && \
     cd / && \
     export PATH=$PATH:/ && \
