@@ -141,6 +141,25 @@ func (s sftpSocket) Get(
 	}
 	defer sshConn.Close()
 
+	sshKeepAliveDone := make(chan struct{})
+	go func() {
+		ticker := time.NewTicker(30 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				_, _, err := sshConn.SendRequest("keepalive@openssh.com", true, nil)
+				if err != nil {
+					l.Warning("SFTP: SSH keepalive failed (session %s): %s", sessionID, err.Error())
+					return
+				}
+			case <-sshKeepAliveDone:
+				return
+			}
+		}
+	}()
+	defer close(sshKeepAliveDone)
+
 	l.Info("SFTP: independent SSH connection established to %s (local=%s, remote=%s)",
 		sessInfo.Address,
 		sshConn.LocalAddr().String(),

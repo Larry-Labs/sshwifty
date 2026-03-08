@@ -148,7 +148,9 @@ func (s socket) Options(
 	return nil
 }
 
-func (s socket) buildWSFetcher(c *websocket.Conn) rw.FetchReaderFetcher {
+func (s socket) buildWSFetcher(
+	c *websocket.Conn, readDeadline time.Duration,
+) rw.FetchReaderFetcher {
 	return func() ([]byte, error) {
 		for {
 			mt, message, err := c.ReadMessage()
@@ -160,6 +162,7 @@ func (s socket) buildWSFetcher(c *websocket.Conn) rw.FetchReaderFetcher {
 					http.StatusBadRequest,
 					fmt.Sprintf("Received unknown type of data: %d", message))
 			}
+			c.SetReadDeadline(time.Now().Add(readDeadline))
 			return message, nil
 		}
 	}
@@ -267,7 +270,7 @@ func (s socket) Get(
 	}()
 	defer close(pingDone)
 
-	wsReader := rw.NewFetchReader(s.buildWSFetcher(c))
+	wsReader := rw.NewFetchReader(s.buildWSFetcher(c, pongWait))
 	wsWriter := websocketWriter{Conn: c}
 
 	// Initialize ciphers
